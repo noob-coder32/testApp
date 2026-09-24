@@ -83,6 +83,8 @@ The hosted app must contain the `client` source folder and the root `package.jso
 
 If GoDaddy builds the frontend separately, set `VITE_API_URL` to the public backend URL before `npm run build`. Do not put any `DB_*` variable in the client environment.
 
+If the page displays an error saying `<!doctype is not valid JSON`, the frontend is receiving HTML from the API URL. For a single Node application serving both frontend and API, leave `VITE_API_URL` empty, set the startup file to `server.js`, and rebuild the client. If frontend and backend are separate GoDaddy applications, set `VITE_API_URL` to the backend application's public URL, rebuild, and redeploy the frontend.
+
 ## Verify the full chain
 
 1. Run the SQL in GoDaddy's Hosted Database SQL interface.

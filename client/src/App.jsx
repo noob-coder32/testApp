@@ -7,6 +7,12 @@ async function callApi(path, options) {
     headers: { 'Content-Type': 'application/json' },
     ...options
   });
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error(
+      `API returned ${response.status} ${response.statusText} instead of JSON. Check the GoDaddy Node startup file and VITE_API_URL.`
+    );
+  }
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.message || 'Request failed');

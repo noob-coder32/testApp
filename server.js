@@ -77,6 +77,10 @@ app.post('/api/users', async (request, response) => {
   }
 });
 
+app.use('/api', (_request, response) => {
+  response.status(404).json({ success: false, message: 'API route not found' });
+});
+
 const clientDist = path.join(__dirname, 'client', 'dist');
 app.use(express.static(clientDist));
 app.get('*', (_request, response) => {
