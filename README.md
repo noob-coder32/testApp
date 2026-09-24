@@ -75,9 +75,11 @@ The Node backend reads them only in `server.js` to create one reusable `mysql2/p
 2. Set the application's startup file to `server.js` and use the Node.js version supported by the hosting account.
 3. Ensure the Hosted MySQL database is attached to the same application so the five `DB_*` variables appear in the Secrets/environment settings.
 4. Do not upload `.env`; configure only non-secret frontend settings in the hosting/build process. For a same-origin deployment, leave `VITE_API_URL` empty.
-5. Install dependencies with `npm install` in the project root and `npm install` in `client`.
-6. Build the frontend with `npm run build` from `client`.
-7. Start the Node application. It listens on `process.env.PORT` and serves `client/dist` as well as the API.
+5. Run `npm install` in the project root. The root `postinstall` script installs the client dependencies and builds `client/dist` automatically.
+6. If the hosting dashboard has a separate build command, use `npm run build` from the project root.
+7. Start the Node application with `npm start`. It listens on `process.env.PORT` and serves `client/dist` as well as the API.
+
+The hosted app must contain the `client` source folder and the root `package.json`. Do not rely on an ignored local `dist` folder being uploaded; GoDaddy should create it by running the install/build step.
 
 If GoDaddy builds the frontend separately, set `VITE_API_URL` to the public backend URL before `npm run build`. Do not put any `DB_*` variable in the client environment.
 
