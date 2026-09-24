@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 const apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 function getApiUrl(path) {
-  const url = new URL(`${apiUrl}${path}`, window.location.origin);
+  const normalizedPath = apiUrl.endsWith('/api') && path.startsWith('/api/')
+    ? path.slice(4)
+    : path;
+  const url = new URL(`${apiUrl}${normalizedPath}`, window.location.origin);
   const previewToken = new URLSearchParams(window.location.search).get('airoShareToken');
   if (previewToken && url.origin === window.location.origin) {
     url.searchParams.set('airoShareToken', previewToken);
