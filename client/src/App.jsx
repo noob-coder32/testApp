@@ -2,8 +2,17 @@ import { useEffect, useState } from 'react';
 
 const apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
+function getApiUrl(path) {
+  const url = new URL(`${apiUrl}${path}`, window.location.origin);
+  const previewToken = new URLSearchParams(window.location.search).get('airoShareToken');
+  if (!apiUrl && previewToken) {
+    url.searchParams.set('airoShareToken', previewToken);
+  }
+  return url.toString();
+}
+
 async function callApi(path, options) {
-  const response = await fetch(`${apiUrl}${path}`, {
+  const response = await fetch(getApiUrl(path), {
     headers: { 'Content-Type': 'application/json' },
     ...options
   });
