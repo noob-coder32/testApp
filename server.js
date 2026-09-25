@@ -58,8 +58,9 @@ app.post('/api/email-test', async (request, response) => {
   const from = typeof request.body?.from === 'string' ? request.body.from.trim() : '';
   const to = typeof request.body?.to === 'string' ? request.body.to.trim() : '';
   const subject = typeof request.body?.subject === 'string' ? request.body.subject.trim() : '';
-  if (!from || !to || !subject) {
-    response.status(400).json({ success: false, message: 'From, to, and subject are required' });
+  const body = typeof request.body?.body === 'string' ? request.body.body : '';
+  if (!from || !to || !subject || !body.trim()) {
+    response.status(400).json({ success: false, message: 'From, to, subject, and body are required' });
     return;
   }
 
@@ -68,7 +69,7 @@ app.post('/api/email-test', async (request, response) => {
       from,
       to: [to],
       subject,
-      text: 'Resend is working from the GoDaddy test app.'
+      text: body
     });
 
     if (error) {

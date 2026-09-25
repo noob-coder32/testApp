@@ -38,6 +38,7 @@ function App() {
   const [mailFrom, setMailFrom] = useState('');
   const [mailTo, setMailTo] = useState('');
   const [mailSubject, setMailSubject] = useState('GoDaddy app email test');
+  const [mailBody, setMailBody] = useState('Resend is working from the GoDaddy test app.');
   const [status, setStatus] = useState({ type: '', text: '' });
   const [loadingUsers, setLoadingUsers] = useState(true);
 
@@ -67,7 +68,7 @@ function App() {
     try {
       await callApi('/api/email-test', {
         method: 'POST',
-        body: JSON.stringify({ from: mailFrom, to: mailTo, subject: mailSubject })
+        body: JSON.stringify({ from: mailFrom, to: mailTo, subject: mailSubject, body: mailBody })
       });
       setStatus({ type: 'success', text: 'Test email sent successfully.' });
     } catch (error) {
@@ -119,8 +120,10 @@ function App() {
           <label htmlFor="mail-to">Mail to</label>
           <input id="mail-to" type="email" value={mailTo} onChange={(event) => setMailTo(event.target.value)} placeholder="recipient@example.com" required />
           <label htmlFor="mail-subject">Subject</label>
+          <input id="mail-subject" value={mailSubject} onChange={(event) => setMailSubject(event.target.value)} required />
+          <label htmlFor="mail-body">Body</label>
           <div className="form-row">
-            <input id="mail-subject" value={mailSubject} onChange={(event) => setMailSubject(event.target.value)} required />
+            <textarea id="mail-body" value={mailBody} onChange={(event) => setMailBody(event.target.value)} rows="6" placeholder="Write your test email here" required />
             <button type="submit">Test Email</button>
           </div>
         </form>
