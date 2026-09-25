@@ -67,7 +67,7 @@ GoDaddy automatically injects these variables when the Hosted MySQL database is 
 - `DB_USER`
 - `DB_PASSWORD`
 
-The Node backend reads them only in `server.js` to create one reusable `mysql2/promise` connection pool. The frontend never receives or reads them. `PORT` is supplied by the hosting runtime or can be set locally. `VITE_API_URL` is a frontend build-time setting and is blank for same-origin deployment.
+The Node backend reads them only in `server.js` to create one reusable `mysql2/promise` connection pool. The frontend never receives or reads them. `PORT` is supplied by the hosting runtime or can be set locally. `VITE_API_URL` is a frontend build-time setting and is blank for same-origin deployment. SMTP settings are also backend-only.
 
 ## Deploy to GoDaddy
 
@@ -94,3 +94,17 @@ If the page displays an error saying `<!doctype is not valid JSON`, the frontend
 5. Refresh the page. The row should still be present, proving the list is read from MySQL rather than only browser state.
 6. Refresh the SQL interface and run `SELECT * FROM test_users ORDER BY id DESC;`. The inserted row should be visible there as well.
 7. If a check fails, inspect the Node server logs. API responses expose only a safe error message and database error code, never the password.
+
+## Test email
+
+Set the SMTP variables in `.env` locally or in the hosting environment, then enter the sender, recipient, and subject in the UI and click **Test Email**:
+
+```env
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-smtp-user
+SMTP_PASSWORD=your-smtp-password
+```
+
+Use `SMTP_SECURE=true` for providers requiring implicit TLS, usually on port 465. The UI values are sent only to the backend for the test message; never use `VITE_` names for SMTP credentials.

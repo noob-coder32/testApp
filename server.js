@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import mysql from 'mysql2/promise';
+import nodemailer from 'nodemailer';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,6 +43,42 @@ app.get('/api/db-test', async (_request, response) => {
       message: 'Database connection failed',
       error: error.code || 'DATABASE_ERROR'
     });
+  }
+});
+
+app.post('/api/email-test', async (request, response) => {
+  const requiredEmailEnvironment = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASSWORD'];
+  const missingEmailEnvironment = requiredEmailEnvironment.filter((key) => !process.env[key]);
+  if (missingEmailEnvironment.length > 0) {
+    response.status(500).json({ success: false, message: `Email configuration is incomplete. Missing: ${missingEmailEnvironment.join(', ')}` });
+    return;
+  }
+
+  const from = typeof request.body?.from === 'string' ? request.body.from.trim() : '';
+  const to = typeof request.body?.to === 'string' ? request.body.to.trim() : '';
+  const subject = typeof request.body?.subject === 'string' ? request.body.subject.trim() : '';
+  if (!from || !to || !subject || subject.length > 200) {
+    response.status(400).json({ success: false, message: 'From, to, and subject are required; subject must be 200 characters or fewer' });
+    return;
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: String(process.env.SMTP_SECURE).toLowerCase() === 'true',
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD }
+    });
+    await transporter.sendMail({
+      from,
+      to,
+      subject,
+      text: 'Nodemailer is working from the GoDaddy test app.'
+    });
+    response.json({ success: true, message: 'Test email sent successfully' });
+  } catch (error) {
+    console.error('Email test failed:', error.message);
+    response.status(500).json({ success: false, message: 'Email test failed', error: error.code || 'EMAIL_ERROR' });
   }
 });
 

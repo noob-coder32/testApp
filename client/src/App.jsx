@@ -35,6 +35,9 @@ async function callApi(path, options) {
 function App() {
   const [users, setUsers] = useState([]);
   const [name, setName] = useState('');
+  const [mailFrom, setMailFrom] = useState('');
+  const [mailTo, setMailTo] = useState('');
+  const [mailSubject, setMailSubject] = useState('GoDaddy app email test');
   const [status, setStatus] = useState({ type: '', text: '' });
   const [loadingUsers, setLoadingUsers] = useState(true);
 
@@ -54,6 +57,19 @@ function App() {
     try {
       await callApi(path);
       setStatus({ type: 'success', text: successMessage });
+    } catch (error) {
+      setStatus({ type: 'error', text: error.message });
+    }
+  }
+
+  async function sendTestEmail(event) {
+    event.preventDefault();
+    try {
+      await callApi('/api/email-test', {
+        method: 'POST',
+        body: JSON.stringify({ from: mailFrom, to: mailTo, subject: mailSubject })
+      });
+      setStatus({ type: 'success', text: 'Test email sent successfully.' });
     } catch (error) {
       setStatus({ type: 'error', text: error.message });
     }
@@ -96,6 +112,18 @@ function App() {
         </div>
 
         {status.text && <p className={`status ${status.type}`}>{status.text}</p>}
+
+        <form className="add-user" onSubmit={sendTestEmail}>
+          <label htmlFor="mail-from">Mail from</label>
+          <input id="mail-from" type="email" value={mailFrom} onChange={(event) => setMailFrom(event.target.value)} placeholder="sender@example.com" required />
+          <label htmlFor="mail-to">Mail to</label>
+          <input id="mail-to" type="email" value={mailTo} onChange={(event) => setMailTo(event.target.value)} placeholder="recipient@example.com" required />
+          <label htmlFor="mail-subject">Subject</label>
+          <div className="form-row">
+            <input id="mail-subject" value={mailSubject} onChange={(event) => setMailSubject(event.target.value)} maxLength="200" required />
+            <button type="submit">Test Email</button>
+          </div>
+        </form>
 
         <form className="add-user" onSubmit={addUser}>
           <label htmlFor="name">Test user name</label>
