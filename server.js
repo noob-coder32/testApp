@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import mysql from 'mysql2/promise';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -25,6 +25,7 @@ const pool = mysql.createPool({
 const app = express();
 const port = Number(process.env.PORT || 5000);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 app.use(express.json());
 
@@ -47,7 +48,7 @@ app.get('/api/db-test', async (_request, response) => {
 });
 
 app.post('/api/email-test', async (request, response) => {
-  const requiredEmailEnvironment = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASSWORD'];
+  const requiredEmailEnvironment = ['RESEND_API_KEY'];
   const missingEmailEnvironment = requiredEmailEnvironment.filter((key) => !process.env[key]);
   if (missingEmailEnvironment.length > 0) {
     response.status(500).json({ success: false, message: `Email configuration is incomplete. Missing: ${missingEmailEnvironment.join(', ')}` });
@@ -63,22 +64,21 @@ app.post('/api/email-test', async (request, response) => {
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT || 587),
-      secure: String(process.env.SMTP_SECURE).toLowerCase() === 'true',
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD }
-    });
-    await transporter.sendMail({
+    const { data, error } = await resend.emails.send({
       from,
-      to,
+      to: [to],
       subject,
-      text: 'Nodemailer is working from the GoDaddy test app.'
+      text: 'Resend is working from the GoDaddy test app.'
     });
-    response.json({ success: true, message: 'Test email sent successfully' });
+
+    if (error) {
+      throw error;
+    }
+
+    response.json({ success: true, message: 'Test email sent successfully', id: data.id });
   } catch (error) {
-    console.error('Email test failed:', error.message);
-    response.status(500).json({ success: false, message: 'Email test failed', error: error.code || 'EMAIL_ERROR' });
+    console.error('Email test failed:', error.message || error);
+    response.status(500).json({ success: false, message: error.message || 'Email test failed', error: error.name || 'EMAIL_ERROR' });
   }
 });
 

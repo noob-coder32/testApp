@@ -97,14 +97,10 @@ If the page displays an error saying `<!doctype is not valid JSON`, the frontend
 
 ## Test email
 
-Set the SMTP variables in `.env` locally or in the hosting environment, then enter the sender, recipient, and subject in the UI and click **Test Email**:
+Set the Resend API key in `.env` locally or in the hosting environment, then enter the sender, recipient, and subject in the UI and click **Test Email**:
 
 ```env
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_SECURE=false
-SMTP_USER=your-smtp-user
-SMTP_PASSWORD=your-smtp-password
+RESEND_API_KEY=re_your_api_key
 ```
 
-Use `SMTP_SECURE=true` for providers requiring implicit TLS, usually on port 465. The UI values are sent only to the backend for the test message; never use `VITE_` names for SMTP credentials.
+The `from` address must be a verified Resend sender/domain. For initial testing, Resend may provide a test sender/recipient in the dashboard. The API key is backend-only; never use a `VITE_` name for it.
