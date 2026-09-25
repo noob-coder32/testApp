@@ -58,8 +58,8 @@ app.post('/api/email-test', async (request, response) => {
   const from = typeof request.body?.from === 'string' ? request.body.from.trim() : '';
   const to = typeof request.body?.to === 'string' ? request.body.to.trim() : '';
   const subject = typeof request.body?.subject === 'string' ? request.body.subject.trim() : '';
-  if (!from || !to || !subject || subject.length > 200) {
-    response.status(400).json({ success: false, message: 'From, to, and subject are required; subject must be 200 characters or fewer' });
+  if (!from || !to || !subject) {
+    response.status(400).json({ success: false, message: 'From, to, and subject are required' });
     return;
   }
 

@@ -120,7 +120,7 @@ function App() {
           <input id="mail-to" type="email" value={mailTo} onChange={(event) => setMailTo(event.target.value)} placeholder="recipient@example.com" required />
           <label htmlFor="mail-subject">Subject</label>
           <div className="form-row">
-            <input id="mail-subject" value={mailSubject} onChange={(event) => setMailSubject(event.target.value)} maxLength="200" required />
+            <input id="mail-subject" value={mailSubject} onChange={(event) => setMailSubject(event.target.value)} required />
             <button type="submit">Test Email</button>
           </div>
         </form>
