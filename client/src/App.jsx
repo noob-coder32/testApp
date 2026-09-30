@@ -108,27 +108,63 @@ function App() {
         <p className="intro">Verify the path from React to Express to your Hosted MySQL database.</p>
 
         <div className="actions">
-          <button type="button" onClick={() => testEndpoint('/api/health', 'Backend is working.')}>Test Backend</button>
-          <button type="button" onClick={() => testEndpoint('/api/db-test', 'Database connection succeeded.')}>Test Database</button>
+          <button type="button" onClick={() => testEndpoint('/api/health', 'Backend is working.')}>
+            Test Backend
+          </button>
+          <button type="button" onClick={() => testEndpoint('/api/db-test', 'Database connection succeeded.')}>
+            Test Database
+          </button>
         </div>
 
         {status.text && <p className={`status ${status.type}`}>{status.text}</p>}
 
         <form className="add-user" onSubmit={sendTestEmail}>
+          <div className="card-header">
+            <h3>Test Email Dispatch</h3>
+          </div>
           <label htmlFor="mail-from">Mail from</label>
-          <input id="mail-from" type="email" value={mailFrom} onChange={(event) => setMailFrom(event.target.value)} placeholder="sender@example.com" required />
+          <input
+            id="mail-from"
+            type="email"
+            value={mailFrom}
+            onChange={(event) => setMailFrom(event.target.value)}
+            placeholder="sender@example.com"
+            required
+          />
           <label htmlFor="mail-to">Mail to</label>
-          <input id="mail-to" type="email" value={mailTo} onChange={(event) => setMailTo(event.target.value)} placeholder="recipient@example.com" required />
+          <input
+            id="mail-to"
+            type="email"
+            value={mailTo}
+            onChange={(event) => setMailTo(event.target.value)}
+            placeholder="recipient@example.com"
+            required
+          />
           <label htmlFor="mail-subject">Subject</label>
-          <input id="mail-subject" value={mailSubject} onChange={(event) => setMailSubject(event.target.value)} required />
+          <input
+            id="mail-subject"
+            value={mailSubject}
+            onChange={(event) => setMailSubject(event.target.value)}
+            required
+          />
           <label htmlFor="mail-body">Body</label>
           <div className="form-row">
-            <textarea id="mail-body" value={mailBody} onChange={(event) => setMailBody(event.target.value)} rows="6" placeholder="Write your test email here" required />
+            <textarea
+              id="mail-body"
+              value={mailBody}
+              onChange={(event) => setMailBody(event.target.value)}
+              rows="5"
+              placeholder="Write your test email here"
+              required
+            />
             <button type="submit">Test Email</button>
           </div>
         </form>
 
         <form className="add-user" onSubmit={addUser}>
+          <div className="card-header">
+            <h3>Insert Test User</h3>
+          </div>
           <label htmlFor="name">Test user name</label>
           <div className="form-row">
             <input
@@ -136,7 +172,7 @@ function App() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               maxLength="100"
-              placeholder="Ada Lovelace"
+              placeholder="e.g. Ada Lovelace"
             />
             <button type="submit">Add User</button>
           </div>
@@ -144,12 +180,29 @@ function App() {
 
         <section className="users-section" aria-live="polite">
           <div className="section-heading">
-            <h2>Users in test_users</h2>
-            <button className="refresh" type="button" onClick={loadUsers}>Refresh</button>
+            <div className="heading-group">
+              <h2>Users in <code>test_users</code></h2>
+              <span className="count-badge" title="Total users">{users.length}</span>
+            </div>
+            <button className="refresh" type="button" onClick={loadUsers}>
+              Refresh
+            </button>
           </div>
-          {loadingUsers ? <p className="muted">Loading users...</p> : users.length === 0 ? <p className="muted">No users yet.</p> : (
+          {loadingUsers ? (
+            <p className="muted">
+              <span className="loading-spinner"></span>Loading users...
+            </p>
+          ) : users.length === 0 ? (
+            <p className="muted">No users in database yet.</p>
+          ) : (
             <ul>
-              {users.map((user) => <li key={user.id}><strong>#{user.id}</strong><span>{user.name}</span><time>{new Date(user.created_at).toLocaleString()}</time></li>)}
+              {users.map((user) => (
+                <li key={user.id}>
+                  <strong>#{user.id}</strong>
+                  <span>{user.name}</span>
+                  <time>{new Date(user.created_at).toLocaleString()}</time>
+                </li>
+              ))}
             </ul>
           )}
         </section>
