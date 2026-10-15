@@ -25,7 +25,7 @@ const pool = mysql.createPool({
 const app = express();
 const port = Number(process.env.PORT || 5000);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const resend = process.env.RESEND_API_KEY2 ? new Resend(process.env.RESEND_API_KEY2.trim()) : null;
 
 app.use(express.json());
 
@@ -48,7 +48,7 @@ app.get('/api/db-test', async (_request, response) => {
 });
 
 app.post('/api/email-test', async (request, response) => {
-  const requiredEmailEnvironment = ['RESEND_API_KEY'];
+  const requiredEmailEnvironment = ['RESEND_API_KEY2'];
   const missingEmailEnvironment = requiredEmailEnvironment.filter((key) => !process.env[key]);
   if (missingEmailEnvironment.length > 0) {
     response.status(500).json({ success: false, message: `Email configuration is incomplete. Missing: ${missingEmailEnvironment.join(', ')}` });
